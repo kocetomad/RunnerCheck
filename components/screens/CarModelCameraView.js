@@ -12,12 +12,18 @@ import {
 import axios, { AxiosError } from "axios";
 import * as FileSystem from "expo-file-system";
 import BottomSheetMain from "../BottomSheetMain";
-
+import ManualSearchButton from "../ManualSearchButton";
+import {
+  useNavigation,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 /**
  * Camera view to take images and have them ready in the app cache
  * @returns
  */
+let pad = 10;
 export default function CarModelCameraView() {
+
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
@@ -66,6 +72,7 @@ export default function CarModelCameraView() {
       );
       // set the preview padding and preview ratio
       setImagePadding(remainder);
+      pad = remainder;
       setRatio(desiredRatio);
       // Set a flag so we don't do this
       // calculation each time the screen refreshes
@@ -129,7 +136,7 @@ export default function CarModelCameraView() {
     //fetching Vision AI results
     try {
       const res = await axios.post(
-        "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDfhjXD6v2zeh6SHf_MwVzncioV6Xzd67A",
+        "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDBNHsBZ-AkKromEvC4lpA4TrWlFazoMZ0",
         data
       );
 
@@ -137,8 +144,8 @@ export default function CarModelCameraView() {
       //console.log("responses ", res.data.responses[0].textAnnotations[0].description.split('\n'));
       //finding all valid number plates in the picture
       let numberPlatesFound = [];
-      let scannedText = res.data.responses[0].textAnnotations[0].description
-        .split("\n")(async function () {
+      let scannedText = res.data.responses[0].textAnnotations[0].description.split("\n");
+      (async function () {
           scannedText.forEach((element) => {
             //regex to check for a valid UK number plate
             if (
@@ -146,26 +153,35 @@ export default function CarModelCameraView() {
                 element.replace(/\s+/g, "").toUpperCase()
               )
             ) {
-              console.log(element);
               numberPlatesFound.push(element);
               setRegNumbers((regNumbers) => [...regNumbers, element]);
             }
           });
         })()
         .then(() => {
-          setLoadingStatus("loaded");
           setBottomSheetState({
             text:
-              newArray.length +
               "Select a number plate:",
           });
         });
     } catch (err) {
       const _err = err;
-      console.log("err ", _err.response);
+      console.log("err ", _err);
     }
   }
 
+  const styles_2 = StyleSheet.create({
+    search_button: {
+      alignSelf: "flex-end",
+      position: "absolute",
+      top: imagePadding,
+      borderWidth: 2,
+      borderRadius: 10,
+      padding: 5,
+      borderColor: "white",
+      backgroundColor: "#f4717f"
+    },
+  })
   return (
     <View style={styles.container}>
       <Camera
@@ -188,6 +204,7 @@ export default function CarModelCameraView() {
           </TouchableOpacity>
         </View>
       </Camera>
+      <ManualSearchButton stylesheet={styles_2.search_button} setBottomSheetState={setBottomSheetState}/>
       <BottomSheetMain setRegNumbers={setRegNumbers} regNumbers={regNumbers} bottomSheetState={bottomSheetState}/>
     </View>
   );
@@ -197,10 +214,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    backgroundColor: "#181818"
   },
   camera: {
     flex: 1,
   },
+  
   buttonContainer: {
     flex: 1,
     flexDirection: "row",

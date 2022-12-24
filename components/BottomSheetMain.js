@@ -2,7 +2,8 @@ import { View, Text, StyleSheet } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import * as React from "react";
 import { useCallback, useMemo, useRef, useState, useEffect } from "react";
-import NumberPlateCard from "./views/NumberPlateCard";
+import NumberPlateCard from "./screens/NumberPlateCard";
+import ManualSearchBar from "./ManualSearchBar";
 
 const BottomSheetMain = ({
   setRegNumbers,
@@ -14,13 +15,21 @@ const BottomSheetMain = ({
   const bottomSheetRef = useRef(null);
   const [mapped, setMapped] = useState([]);
   // variables
-  const snapPoints = useMemo(() => ["9%", "100%"], []);
+  const snapPoints = useMemo(() => ["1%", "50%"], []);
 
-  //expands bottom sheet if area filter butto nis pressed 
+  //expands bottom sheet if area filter butto is pressed 
   useEffect(() => {
     if (
       bottomSheetState.text.includes(
         "Select a number plate:"
+      )
+    ) {
+      bottomSheetRef.current.expand();
+    }
+
+    if (
+      bottomSheetState.text.includes(
+        "Manual Search:"
       )
     ) {
       bottomSheetRef.current.expand();
@@ -61,6 +70,8 @@ const BottomSheetMain = ({
     >
       <View style={sheetStyle.contentContainer}>
         <Text>{bottomSheetState.text}</Text>
+        {bottomSheetState.text.includes(
+        "Manual Search:") ? <ManualSearchBar/> : "" }
       </View>
       <BottomSheetScrollView contentContainerStyle={sheetStyle.ScrollView}>
         <MapRegNumbers regs={mapped} />
@@ -73,7 +84,6 @@ const sheetStyle = StyleSheet.create({
   container: {
     flex: 1,
     padding: 1,
-    backgroundColor: "grey",
   },
   contentContainer: {
     flex: 0.1,

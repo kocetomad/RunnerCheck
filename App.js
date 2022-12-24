@@ -1,15 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import CarModelCameraView from './components/views/CarModelCameraView';
-import Badge from './components/views/NumberPlateCard';
+import CarModelCameraView from './components/screens/CarModelCameraView';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
+import MainStackNav from './components/navigation/MainStackNavigator';
 
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
 
-    <CarModelCameraView/>
+    <MainStackNav/>
     </GestureHandlerRootView>
   );
 }

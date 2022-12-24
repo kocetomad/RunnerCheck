@@ -19,11 +19,10 @@ const styles = StyleSheet.create({
     marginRight: 5,
     elevation: 10,
     borderRadius: 10,
-    borderColor: "black",
     marginBottom: 10,
-    backgroundColor: "white",
+    backgroundColor: "#ffcd00",
     justifyContent: "center",
-    borderColor: "#3c775b",
+    borderColor: "black",
     borderWidth: 1, //Centered vertically
   },
   tinyLogo: {
