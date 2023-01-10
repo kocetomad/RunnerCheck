@@ -31,18 +31,16 @@ const Onboarding = ({ requestPermission }) => {
   return (
     <View style={styles.container}>
       
-    <Text>Swipe to </Text>
+    
     <Swiper style={styles.wrapper} showsButtons loop={false}>
     <View testID="Hello" style={styles.slide1}>
-      <Text style={styles.text}>Hello Swiper</Text>
+      <Text style={styles.text}>Take a picture of a car's number plate </Text>
     </View>
     <View testID="Beautiful" style={styles.slide2}>
       <Text style={styles.text}>Beautiful</Text>
     </View>
     <View testID="Simple" style={styles.slide3}>
       <Text style={styles.text}>And simple</Text>
-    </View>
-  </Swiper>
       <TouchableOpacity
         onPress={requestPermission}
         style={styles.button}
@@ -60,6 +58,9 @@ const Onboarding = ({ requestPermission }) => {
         </View>
       </TouchableOpacity>
     </View>
+  </Swiper>
+      
+    </View>
   );
 };
 const width = Dimensions.get("window").width;
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    flexWrap: 'wrap',
   },
   button: {
     marginTop: 50,
@@ -103,7 +105,9 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
     fontSize: 30,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: "center"
+
   }
 });
 
