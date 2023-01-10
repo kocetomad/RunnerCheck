@@ -4,9 +4,9 @@ import {
   TouchableOpacity,
   Text,
   View,
-  TextInput,
   Dimensions,
   StyleSheet,
+  Linking
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -14,30 +14,24 @@ import {
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 
-const ManualSearchBar = ({ stylesheet, setBottomSheetState }) => {
+const BrowserLinkButton = ({ make, model }) => {
   const navigation = useNavigation();
-  const [textSearchbar, textSearchbarChanged] = useState("");
   const [searchState, setSearchState] = useState("");
 
   return (
     <View style={{ zIndex: 1 }}>
-      <TextInput
-        style={sheetStyle.input}
-        onChangeText={textSearchbarChanged}
-        placeholder="Enter a registration number"
-        value={textSearchbar}
-      />
       <TouchableOpacity
         onPress={() => {
-          if (
-            /^(^[A-Z]{2}[0-9]{2}\s?[A-Z]{3}$)|(^[A-Z][0-9]{1,3}[A-Z]{3}$)|(^[A-Z]{3}[0-9]{1,3}[A-Z]$)|(^[0-9]{1,4}[A-Z]{1,2}$)|(^[0-9]{1,3}[A-Z]{1,3}$)|(^[A-Z]{1,2}[0-9]{1,4}$)|(^[A-Z]{1,3}[0-9]{1,3}$)|(^[A-Z]{1,3}[0-9]{1,4}$)|(^[0-9]{3}[DX]{1}[0-9]{3}$)$/.test(
-              textSearchbar.replace(/\s+/g, "").toUpperCase()
-            )
-          ) {
-            navigation.navigate("Car Details", { regNum: textSearchbar });
-          } else {
-            setSearchState("invalid")
-          }
+            Linking.canOpenURL("https://www.google.com/search?q=hyundai+sonata+issues").then(supported => {
+                if (supported) {
+                  Linking.openURL("https://www.google.com/search?q=hyundai+sonata+issues");
+                } else {
+                  console.log("Don't know how to open URI: " + "https://www.google.com/search?" +
+                  new URLSearchParams({
+                    q: make+" "+model+" issues",
+                  }));
+                }
+              });
         }}
         style={sheetStyle.button}
       >
@@ -50,7 +44,7 @@ const ManualSearchBar = ({ stylesheet, setBottomSheetState }) => {
             top: "20%",
           }}
         >
-          <Text style={{ color: "#e9e3e3" }}>Search</Text>
+          <Text style={{ color: "#e9e3e3", fontSize:18 }}>More Issues 🌐</Text>
         </View>
       </TouchableOpacity>
       
@@ -73,7 +67,18 @@ const ManualSearchBar = ({ stylesheet, setBottomSheetState }) => {
 
 const windowWidth = Dimensions.get("window").width;
 
+const sheetStyle = StyleSheet.create({
+  button: {
+    marginTop: 15,
+    width: windowWidth - windowWidth * 0.2,
+    height: 50,
+    borderWidth: 1,
+    borderColor: "white",
+    paddingHorizontal: 10,
+    backgroundColor: "#f4717f",
+    borderRadius: 15,
+    elevation: 8,
+  },
+});
 
-
-
-export default ManualSearchBar;
+export default BrowserLinkButton;

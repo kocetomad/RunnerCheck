@@ -6,7 +6,7 @@ import {
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 
-const ManualSearchButton = ({ stylesheet, setBottomSheetState }) => {
+const HelpButton = ({ stylesheet, setBottomSheetState }) => {
   const navigation = useNavigation();
 
   return (
@@ -22,12 +22,12 @@ const ManualSearchButton = ({ stylesheet, setBottomSheetState }) => {
       }}
       style={stylesheet}
     >
-      <View style={{ flexDirection: "row", alignItems: "center",  alignSelf:"center"}}>
-        <Text style={{color:"#f4717f", fontSize: 14}}>Manual search </Text>
-        <Icon name="search" size={25} color="#f4717f" />
+      <View style={{ flexDirection: "row", alignItems: "center",alignSelf:"center"}}>
+        <Text style={{color:"#f4717f",fontSize: 14}}>Help</Text>
+        <Icon name="help-outline" size={25} color="#f4717f" />
       </View>
     </TouchableOpacity>
   );
 };
 
-export default ManualSearchButton;
+export default HelpButton;

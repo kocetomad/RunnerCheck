@@ -1,12 +1,23 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
-
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  useNavigation,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 //Badge view for location tags
 const NumberPlateCard = ({ reg }) => {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.card}>
-      <Text>{reg}</Text>
-    </View>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate("Car Details", { regNum: reg });
+      }}
+    >
+      <View style={styles.card}>
+        <Text style={{ fontSize: 30 }}>{reg}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
