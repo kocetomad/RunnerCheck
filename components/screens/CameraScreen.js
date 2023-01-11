@@ -1,5 +1,5 @@
 import { Camera, CameraType } from "expo-camera";
-import { useRef, useState, useLayoutEffect } from "react";
+import { useRef, useState, useLayoutEffect, useEffect } from "react";
 import {
   Button,
   StyleSheet,
@@ -11,24 +11,25 @@ import {
 } from "react-native";
 import axios, { AxiosError } from "axios";
 import * as FileSystem from "expo-file-system";
-import BottomSheetMain from "../BottomSheetMain";
-import ManualSearchButton from "../ManualSearchButton";
-import FavouritesButton from "../FavouritesButton";
-import HelpButton from "../HelpButton";
-import Onboarding from "../Onboarding";
+import BottomSheetMain from "../content/popup/BottomSheet";
+import ManualSearchButton from "../button/cameraScreen-buttons/ManualSearchButton";
+import FavouritesButton from "../button/cameraScreen-buttons/FavouritesButton";
+import HelpButton from "../button/cameraScreen-buttons/HelpButton";
+import Onboarding from "./OnboardingScreen";
 import { LoadingModal } from "react-native-loading-modal";
-import CameraButton from "../CameraButton";
+import CameraButton from "../button/cameraScreen-buttons/CameraButton";
 import {
   useNavigation,
   useIsFocused,
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 /**
- * Camera view to take images and have them ready in the app cache
- * @returns
+ * Represents the main camera view.
+ * @constructor
+ * @param {route} route - React navigation route parameters.
  */
 let pad = 10;
-export default function CarModelCameraView({route}) {
+export default function CarModelCameraView({ route }) {
   const isFocused = useIsFocused();
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -43,20 +44,15 @@ export default function CarModelCameraView({route}) {
   const [regNumbers, setRegNumbers] = useState([]);
   const [bottomSheetState, setBottomSheetState] = useState({ text: "-" });
 
-
-  
   const navigation = useNavigation();
-
-  // useLayoutEffect(() => {
-  //   const routeName = getFocusedRouteNameFromRoute(route);
-  //   if (routeName === "Camera") {
-  //     navigation.setOptions({headerShown: true});
-  //   } else {
-  //     navigation.setOptions({headerShown: false});
-  //   }
-  // }, [navigation, route]);
-
+  /** This function is necassary is the Expo cammera integration has an issue
+   * with android devices, where the camera prview and output would
+   * stretch out to fit the screen, thus it is necessary that the appropriate
+   * padding be set for the camera preview, in order to prevent said stretching. */
   const prepareRatio = async () => {
+    setBottomSheetState({
+      text: "-",
+    });
     let desiredRatio = "4:3"; // Start with the system default
     // This issue only affects Android
     if (Platform.OS === "android") {
@@ -114,9 +110,7 @@ export default function CarModelCameraView({route}) {
 
   if (!permission.granted) {
     // Camera permissions are not granted yet
-    return (
-        <Onboarding requestPermission={requestPermission}></Onboarding>
-    );
+    return <Onboarding requestPermission={requestPermission}></Onboarding>;
   }
 
   function toggleCameraType() {
@@ -127,12 +121,10 @@ export default function CarModelCameraView({route}) {
 
   async function takePicture() {
     if (!permission) return;
-    // @ts-ignore
     const photo = await camera.takePictureAsync();
 
     setBottomSheetState({
-      text:
-        "Loading...",
+      text: "Loading...",
     });
 
     console.log("finished taking photo here's the photo", photo);
@@ -159,35 +151,35 @@ export default function CarModelCameraView({route}) {
         data
       );
 
-      console.log("res ", res.data.responses[0].textAnnotations[0].description.split('\n'));
-      //console.log("responses ", res.data.responses[0].textAnnotations[0].description.split('\n'));
+      console.log(
+        "res ",
+        res.data.responses[0].textAnnotations[0].description.split("\n")
+      );
       //finding all valid number plates in the picture
       let numberPlatesFound = [];
-      let scannedText = res.data.responses[0].textAnnotations[0].description.split("\n");
+      let scannedText =
+        res.data.responses[0].textAnnotations[0].description.split("\n");
       setLoading(true);
       (async function () {
         setRegNumbers([]);
-          scannedText.forEach((element) => {
-            //regex to check for a valid UK number plate
-            if (
-              /^(^[A-Z]{2}[0-9]{2}\s?[A-Z]{3}$)|(^[A-Z][0-9]{1,3}[A-Z]{3}$)|(^[A-Z]{3}[0-9]{1,3}[A-Z]$)|(^[0-9]{1,4}[A-Z]{1,2}$)|(^[0-9]{1,3}[A-Z]{1,3}$)|(^[A-Z]{1,2}[0-9]{1,4}$)|(^[A-Z]{1,3}[0-9]{1,3}$)|(^[A-Z]{1,3}[0-9]{1,4}$)|(^[0-9]{3}[DX]{1}[0-9]{3}$)$/.test(
-                element.replace(/\s+/g, "").toUpperCase()
-              )
-            ) {
-              numberPlatesFound.push(element);
-              console.log("palte added:", element)
-              setRegNumbers((regNumbers) => [...regNumbers, element]);
-            }
-          });
-        })()
-        .then(() => {
-          setBottomSheetState({
-            text:
-              "Select a number plate:",
-          });
-          setLoading(false);
-
+        scannedText.forEach((element) => {
+          //regex to check for a valid UK number plate
+          if (
+            /^(^[A-Z]{2}[0-9]{2}\s?[A-Z]{3}$)|(^[A-Z][0-9]{1,3}[A-Z]{3}$)|(^[A-Z]{3}[0-9]{1,3}[A-Z]$)|(^[0-9]{1,4}[A-Z]{1,2}$)|(^[0-9]{1,3}[A-Z]{1,3}$)|(^[A-Z]{1,2}[0-9]{1,4}$)|(^[A-Z]{1,3}[0-9]{1,3}$)|(^[A-Z]{1,3}[0-9]{1,4}$)|(^[0-9]{3}[DX]{1}[0-9]{3}$)$/.test(
+              element.replace(/\s+/g, "").toUpperCase()
+            )
+          ) {
+            numberPlatesFound.push(element);
+            console.log("palte added:", element);
+            setRegNumbers((regNumbers) => [...regNumbers, element]);
+          }
         });
+      })().then(() => {
+        setBottomSheetState({
+          text: "Select a number plate:",
+        });
+        setLoading(false);
+      });
     } catch (err) {
       const _err = err;
       console.log("err ", _err);
@@ -214,7 +206,6 @@ export default function CarModelCameraView({route}) {
       borderColor: "white",
       backgroundColor: "white",
       marginVertical: 4,
-
     },
     fav_button: {
       flex: 1,
@@ -224,46 +215,56 @@ export default function CarModelCameraView({route}) {
       borderColor: "white",
       backgroundColor: "#e9e3e3",
       marginVertical: 4,
-
     },
     button_container: {
       flexDirection: "row",
       position: "absolute",
       top: imagePadding - 40,
-      backgroundColor: "white"
-
-    }
-  })
+      backgroundColor: "white",
+    },
+  });
   return (
     <View style={styles.container}>
+      {isFocused ? (
+        <Camera
+          onCameraReady={setCameraReady}
+          ref={(ref) => {
+            if (ref !== null) camera = ref;
+          }}
+          style={[
+            styles.cameraPreview,
+            { marginTop: imagePadding, marginBottom: imagePadding },
+          ]}
+          type={type}
+        >
+          <View style={styles.buttonContainer}>
+            <CameraButton takePicture={takePicture} />
+          </View>
+        </Camera>
+      ) : (
+        ""
+      )}
 
-      {isFocused ? <Camera
-        onCameraReady={setCameraReady}
-        ref={(ref) => {
-          if (ref !== null) camera = ref;
-        }}
-        style={[
-          styles.cameraPreview,
-          { marginTop: imagePadding, marginBottom: imagePadding },
-        ]}
-        type={type}
-      >
-        
-
-        <View style={styles.buttonContainer}>
-          {/* <TouchableOpacity style={styles.button} onPress={takePicture}>
-            <Text style={styles.text}>Take Picture</Text>
-          </TouchableOpacity> */}
-          <CameraButton takePicture={takePicture}/>
-        </View>
-      </Camera> : ""}
-
-      <View style= {styles_2.button_container}>
-      <HelpButton stylesheet={styles_2.help_button} setBottomSheetState={setBottomSheetState}/>
-      <ManualSearchButton stylesheet={styles_2.search_button} setBottomSheetState={setBottomSheetState}/>
-      <FavouritesButton stylesheet={styles_2.help_button} setBottomSheetState={setBottomSheetState}/>
+      <View style={styles_2.button_container}>
+        <HelpButton
+          stylesheet={styles_2.help_button}
+          setBottomSheetState={setBottomSheetState}
+        />
+        <ManualSearchButton
+          stylesheet={styles_2.search_button}
+          setBottomSheetState={setBottomSheetState}
+        />
+        <FavouritesButton
+          stylesheet={styles_2.help_button}
+          setBottomSheetState={setBottomSheetState}
+        />
       </View>
-      <BottomSheetMain setRegNumbers={setRegNumbers} regNumbers={regNumbers} bottomSheetState={bottomSheetState} setBottomSheetState={setBottomSheetState}/>
+      <BottomSheetMain
+        setRegNumbers={setRegNumbers}
+        regNumbers={regNumbers}
+        bottomSheetState={bottomSheetState}
+        setBottomSheetState={setBottomSheetState}
+      />
     </View>
   );
 }
@@ -272,12 +273,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#181818"
+    backgroundColor: "#181818",
   },
   camera: {
     flex: 1,
   },
-  
+
   buttonContainer: {
     flex: 1,
     flexDirection: "row",

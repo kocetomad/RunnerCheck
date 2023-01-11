@@ -3,8 +3,9 @@ import React, { useState, useLayoutEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Ionicons";
 import { TouchableOpacity } from "react-native";
-import CarModelCameraView from "../screens/CarModelCameraView";
-import CarDetailsView from "../screens/CarDetails";
+import CarModelCameraView from "../screens/CameraScreen";
+import Onboarding from "../screens/OnboardingScreen";
+import CarDetailsView from "../screens/CarDetailsScreen";
 const MyTheme = {
   ...DefaultTheme,
   colors: {
@@ -13,15 +14,14 @@ const MyTheme = {
     card: "#f4717f",
   },
 };
-import {
-  useNavigation,
-  getFocusedRouteNameFromRoute,
-} from "@react-navigation/native";
-
-//Wraps the Stack Nav for the Home screen
+/**
+ * Represents the Stack Navigation structure, uses react navigation.
+ * @constructor
+ * @param {route} route - React navigation route parameters.
+ */
 function MainStackNav({ route }) {
   const Stack = createStackNavigator();
-  const [selectedCar, setSelectedCar] = useState({model:"",reg:""});
+  const [selectedCar, setSelectedCar] = useState({ model: "", reg: "" });
 
   return (
     <NavigationContainer theme={MyTheme}>
@@ -40,6 +40,13 @@ function MainStackNav({ route }) {
             component={CarDetailsView}
             options={{
               headerShown: true,
+            }}
+          />
+          <Stack.Screen
+            name="Help"
+            component={Onboarding}
+            options={{
+              headerShown: false,
             }}
           />
         </Stack.Group>

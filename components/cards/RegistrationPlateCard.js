@@ -4,7 +4,14 @@ import {
   useNavigation,
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
-//Badge view for location tags
+/**
+ * Represents the registration plate card inside of the main camera view.
+ * @constructor
+ * @param {string} reg - the resgistration number detected by Vision AI.
+ * @param {state} regNumbers - registration numbers state variable.
+ * @param {setState} setBottomSheetState - bottom sheet state setter.
+ * @param {state} bottomSheetState - bottom sheet state variable.
+ */
 const NumberPlateCard = ({ reg }) => {
   const navigation = useNavigation();
 

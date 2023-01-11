@@ -12,17 +12,22 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { loadCarData } from "../data/Data";
-import CarSpecsList from "../CarSpecsList";
-import DvlaButton from "../DvlaButton";
+import CarSpecsList from "../content/carDetails/CarSpecsList";
+import DvlaButton from "../button/detailsScreen-button/DvlaButton";
 import Icon from "react-native-vector-icons/Ionicons";
-import CommonIssuesButton from "../CommonIssuesButton";
-import BottomSheetMain from "../BottomSheetMain";
+import CommonIssuesButton from "../button/detailsScreen-button/CommonIssuesButton";
+import BottomSheetMain from "../content/popup/BottomSheet";
 import {
   useNavigation,
   getFocusedRouteNameFromRoute,
 } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-//Badge view for location tags
+
+/**
+ * Represents the main car details view.
+ * @constructor
+ * @param {route} route - React navigation route parameters.
+ */
 const CarDetailsView = ({ route }) => {
   const [carData, setCarData] = useState([]);
   const [carPicture, setCarPicture] = useState("");
@@ -31,7 +36,9 @@ const CarDetailsView = ({ route }) => {
 
   const { regNum, setSelectedCar } = route.params;
   useEffect(() => {
-    console.log("ren num: "+ regNum)
+    console.log("ren num: " + regNum);
+
+    /** Loading and mapping the data for the selected car. */
     loadCarData(regNum).then((processed) => {
       setCarPicture(processed[processed.length - 1]);
       processed.pop();
@@ -40,13 +47,16 @@ const CarDetailsView = ({ route }) => {
         title: "Car Details for: " + regNum,
         headerRight: () => (
           <TouchableOpacity
+            /** Saving a car into the the async storage, so that it can be viewed in the saved tab */
             onPress={() => {
               (async function () {
                 try {
                   console.log("saved: " + processed[0] + " " + processed[1]);
                   a = await AsyncStorage.setItem(
                     regNum + "",
-                    processed[1].replace('Make: ', '') + " " + processed[2].replace('Model: ', '')
+                    processed[1].replace("Make: ", "") +
+                      " " +
+                      processed[2].replace("Model: ", "")
                   );
                 } catch (e) {
                   // read key error

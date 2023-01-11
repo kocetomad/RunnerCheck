@@ -2,27 +2,32 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import * as React from "react";
 import { useCallback, useMemo, useRef, useState, useEffect } from "react";
-import NumberPlateCard from "./screens/NumberPlateCard";
-import ManualSearchBar from "./ManualSearchBar";
-import { objToArray } from "./data/Data";
-import BrowserLinkButton from "./BrowserLinkButton";
-import FavouriteCard from "./FavouriteCard";
+import NumberPlateCard from "../../cards/RegistrationPlateCard";
+import ManualSearchBar from "../../inputs/ManualSearchBar";
+import { objToArray } from "../../data/Data";
+import BrowserLinkButton from "../../button/detailsScreen-button/BrowserLinkButton";
+import FavouriteCard from "../../cards/FavouriteCard";
 
-
+/**
+ * Represents the Bottom sheet component used to present most data inside the app.
+ * @constructor
+ * @param {setState} setRegNumbers - a state setter for the registration number array.
+ * @param {state} regNumbers - registration numbers state variable.
+ * @param {setState} setBottomSheetState - bottom sheet state setter.
+ * @param {state} bottomSheetState - bottom sheet state variable.
+ */
 const BottomSheetMain = ({
   setRegNumbers,
   regNumbers,
-  setLoading,
-  loading,
   bottomSheetState,
   setBottomSheetState,
 }) => {
   const bottomSheetRef = useRef(null);
   const [mapped, setMapped] = useState([]);
-  // variables
-  const snapPoints = useMemo(() => ["50%"], []);
+  const snapPoints = useMemo(() => ["1%", "50%"], []);
 
-  //expands bottom sheet if area filter butto is pressed
+  /** expands or collapses the bottom sheet,
+   * depending on the bottom sheet title text. */
   useEffect(() => {
     if (bottomSheetState.text.includes("Select a number plate:")) {
       bottomSheetRef.current.expand();
@@ -30,7 +35,7 @@ const BottomSheetMain = ({
 
     if (bottomSheetState.text.includes("Loading...")) {
       bottomSheetRef.current.expand();
-      var mapp = <ActivityIndicator size="large" color="#f4717f"/>
+      var mapp = <ActivityIndicator size="large" color="#f4717f" />;
       setMapped(mapp);
     }
 
@@ -57,15 +62,11 @@ const BottomSheetMain = ({
       bottomSheetRef.current.close();
     }
   }, [bottomSheetState]);
-  
-  useEffect(() => {
-    bottomSheetRef.current.close();
-  }, []);
 
   const handleSheetChanges = useCallback((index) => {}, []);
-  //Maps cardviews if filter area is pressed
+  /** Maps cardviews if filter area is pressed */
   useEffect(() => {
-    if(regNumbers !== undefined){
+    if (regNumbers !== undefined) {
       (async function () {
         var mapp = regNumbers.map((reg, index) => (
           <NumberPlateCard key={index} reg={reg}></NumberPlateCard>
@@ -80,24 +81,41 @@ const BottomSheetMain = ({
   }, [regNumbers]);
 
   useEffect(() => {
-    if(bottomSheetState.data !== undefined){
+    if (bottomSheetState.data !== undefined) {
       // let parsed = (JSON.parse(bottomSheetState.data));
       // parsed = (objToArray(parsed));
       (async function () {
         if (bottomSheetState.text.includes("Official DVLA data:")) {
           var mapp = bottomSheetState.data.map((item) => (
-            <Text key={item} >{item[0].charAt(0).toUpperCase() + item[0].replace(/([A-Z])/g, ' $1').trim().toLowerCase().slice(1)} : {item[1]}</Text>
+            <Text key={item}>
+              {item[0].charAt(0).toUpperCase() +
+                item[0]
+                  .replace(/([A-Z])/g, " $1")
+                  .trim()
+                  .toLowerCase()
+                  .slice(1)}{" "}
+              : {item[1]}
+            </Text>
           ));
-        } else if(bottomSheetState.text.includes("Saved vehicles:")) {
+        } else if (bottomSheetState.text.includes("Saved vehicles:")) {
           var mapp = bottomSheetState.data.map((item) => (
-            <FavouriteCard key={item[0]} reg={[item[0],item[1]]} setBottomSheetState={setBottomSheetState}></FavouriteCard>
+            <FavouriteCard
+              key={item[0]}
+              reg={[item[0], item[1]]}
+              setBottomSheetState={setBottomSheetState}
+            ></FavouriteCard>
           ));
         } else {
           var mapp = bottomSheetState.data.map((item) => (
-            <Text key={item} style={{marginHorizontal:20, alignSelf:"flex-start"}}>* {item}</Text>
+            <Text
+              key={item}
+              style={{ marginHorizontal: 20, alignSelf: "flex-start" }}
+            >
+              * {item}
+            </Text>
           ));
         }
-        
+
         return mapp;
       })()
         .then((mapp) => {
@@ -135,12 +153,18 @@ const BottomSheetMain = ({
       <BottomSheetScrollView contentContainerStyle={sheetStyle.ScrollView}>
         <MapRegNumbers regs={mapped} />
         {bottomSheetState.text.includes("Common Issues:") ? (
-          <BrowserLinkButton make={bottomSheetState.link[0]} model={bottomSheetState.link[1]}/>
+          <BrowserLinkButton
+            make={bottomSheetState.link[0]}
+            model={bottomSheetState.link[1]}
+          />
         ) : (
           ""
         )}
         {bottomSheetState.text.includes("Couldn't find any common issues:") ? (
-          <BrowserLinkButton make={bottomSheetState.link[0]} model={bottomSheetState.link[1]}/>
+          <BrowserLinkButton
+            make={bottomSheetState.link[0]}
+            model={bottomSheetState.link[1]}
+          />
         ) : (
           ""
         )}

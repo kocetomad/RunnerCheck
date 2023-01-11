@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import CarModelCameraView from './components/screens/CarModelCameraView';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MainStackNav from './components/navigation/MainStackNavigator';
 
