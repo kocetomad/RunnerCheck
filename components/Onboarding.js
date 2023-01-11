@@ -34,13 +34,49 @@ const Onboarding = ({ requestPermission }) => {
     
     <Swiper style={styles.wrapper} showsButtons loop={false}>
     <View testID="Hello" style={styles.slide1}>
-      <Text style={styles.text}>Take a picture of a car's number plate </Text>
+      <Text style={styles.title}>Welcome to{"\n"}Runner Check! 🥳</Text>
+      <Text style={[styles.text, {marginTop:30}]}><Text style={{fontStyle:"italic"}}>Swipe right</Text> to familiarise yourself with the app</Text>
+      <Text style={[styles.text, {marginTop:30}]}>or</Text>
+      <TouchableOpacity
+        onPress={requestPermissioI understand and wish to proceedI understand and wish to proceedI understand and wish to proceedn}
+        style={styles.button}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            alignSelf: "center",
+            position: "absolute",
+            top: "20%",
+          }}
+        >
+          <Text style={{ color: "#e9e3e3", fontSize:17, fontWeight:"bold" }}>Proceed straight to the app</Text>
+        </View>
+      </TouchableOpacity>
     </View>
+    <View testID="Hello" style={styles.slide1}>
+      <Text style={styles.text}>Take a picture of a car's number plate </Text>
+      <Image style={styles.image} source={require('../assets/pic1.png')} />
+    </View>
+    <View testID="slide2" style={styles.slide1}>
+      <Text style={styles.text}>Select scanned registration plate (multiple possible)</Text>
+      <Image style={styles.image} source={require('../assets/pic5.jpg')} />
+    </View>
+    
     <View testID="Beautiful" style={styles.slide2}>
-      <Text style={styles.text}>Beautiful</Text>
+      <Text style={styles.text}>View car specs,{"\n"} dvla data and issues</Text>
+      <Image style={styles.image} source={require('../assets/pic3.jpg')} />
+    </View>
+    <View testID="slide2" style={styles.slide1}>
+      <Text style={styles.text}>Save the details {"\n"}for a vehicle</Text>
+      <Image style={styles.image} source={require('../assets/pic2.png')} />
+    </View>
+    <View testID="slide2" style={styles.slide1}>
+      <Text style={styles.text}>View saved{"\n"}vehicles</Text>
+      <Image style={styles.image} source={require('../assets/pic4.png')} />
     </View>
     <View testID="Simple" style={styles.slide3}>
-      <Text style={styles.text}>And simple</Text>
+      <Text style={styles.text}>The app requires camera permissions</Text>
       <TouchableOpacity
         onPress={requestPermission}
         style={styles.button}
@@ -108,6 +144,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: "center"
 
+  },
+  title: {
+    color: '#fff',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: "center"
+
+  },
+  image: {
+    width: width * 0.88,
+    height: width * 1.60,
+    resizeMode: "cover",
+    borderRadius: 20,
   }
 });
 

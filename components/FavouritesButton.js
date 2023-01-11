@@ -39,7 +39,7 @@ const FavouritesButton = ({ stylesheet, setBottomSheetState }) => {
       style={stylesheet}
     >
       <View style={{ flexDirection: "row", alignItems: "center",alignSelf:"center" }}>
-        <Text style={{color:"#f4717f",fontSize: 14}}>Favourites </Text>
+        <Text style={{color:"#f4717f",fontSize: 14}}>Saved </Text>
         <Icon name="star-outline" size={25} color="#f4717f" />
       </View>
     </TouchableOpacity>
